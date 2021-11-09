@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>MonoColor</title>
+    </head>
+
+    <style type="text/css">
+        body{
+            background-color: #000;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+    </style>
+ 
+    <body>
+
+        <script src="/socket.io/socket.io.js"></script>
+
+        <script>
+
+            var socket = io.connect('http://localhost:8080');
+
+            socket.on('receive-osc', function(message) {
+
+                if(message['0'] == '/midi/noteon'){
+                    console.log(message['2']);
+
+                    var r = parseInt(Math.random()*255);
+                    var g = parseInt(Math.random()*255);
+                    var b = parseInt(Math.random()*255);
+
+                    var style = 'rgb('+r+', '+g+', '+b+')';
+
+                    console.log(style);
+
+                    document.body.style.backgroundColor = style;
+                }
+            });
+
+        </script>
+        
+    </body>
+</html>

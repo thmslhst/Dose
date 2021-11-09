@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>RainbowSplitter</title>
+    </head>
+
+    <style>
+        html, body{
+            width: 100%;
+            height: 100%;
+        }
+        body{
+            background-color: #000;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+        div{
+            height: 100%;
+            float: left;
+        }
+    </style>
+ 
+    <body>
+
+        <script src="/socket.io/socket.io.js"></script>
+
+        <script>
+
+            var socket = io.connect('http://localhost:8080');
+
+            socket.on('receive-osc', function(message) {
+
+                if(message['0'] == '/midi/noteon'){
+                    onNoteOn(message['2']);
+                } else if(message['0'] == '/midi/noteoff'){
+                    onNoteOff(message['2']);
+                }
+            });
+
+            var elements = {};
+            var notes = 0;
+
+            function onNoteOn(note){
+
+                if(elements[note] === undefined){
+                    elements[note] = document.createElement('div');
+                    elements[note].style.backgroundColor = getRandomColor();
+                }
+
+                document.body.appendChild(elements[note]);
+
+                notes++;
+
+                for(var n in elements){
+                    elements[n].style.width = window.innerWidth/notes + 'px';
+                }
+            }
+
+            function onNoteOff(note){
+                document.body.removeChild(elements[note]);
+                notes--;
+                for(var n in elements){
+                    elements[n].style.width = window.innerWidth/notes + 'px';
+                }
+            }
+
+            function getRandomColor(){
+
+                var r = parseInt(Math.random()*255);
+                var g = parseInt(Math.random()*255);
+                var b = parseInt(Math.random()*255);
+                var style = 'rgb('+r+', '+g+', '+b+')';
+
+                return style;
+            }
+
+        </script>
+        
+    </body>
+</html>
